@@ -78,9 +78,29 @@ export class MenuItemsService {
     */
 
     async getMenuItems() {
-        return await MenuItem.findAll({
-            where: {},
+        const menuRecords = await MenuItem.findAll({
             raw: true
         });
+        const sorted = [];
+        for (let i in menuRecords) {
+            sorted.push({
+                ...menuRecords[i],
+                children: this.filterChilds(menuRecords, menuRecords[i].id)
+            })
+        }
+        return sorted;
+    }
+
+    // menuItemTree(data: Array<MenuItem>, id: number) {
+    //     const treeArr = this.filterChilds(data, id);
+    //     if(treeArr.length > 0){
+
+    //     }else{
+    //         return
+    //     }
+    // }
+
+    filterChilds(data: Array<MenuItem>, id: number) {
+        return data.filter(item => item.parentId === id)
     }
 }
